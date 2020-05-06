@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta name="referrer" content="no-referrer">
+     <meta charset="UTF-8">
+     <title>车间数据化管理系统</title>
+
+     <link type="text/css" rel="stylesheet" href="/css/common.css">
+     <link type="text/css" rel="stylesheet" href="/css/self.console.css">
+     <link type="text/css" rel="stylesheet" href="/depend/layui/css/layui.css">
+     <link rel="stylesheet" href="/css/font-awesome.min.css">
+     <script src="/depend/js/jquery-2.1.1.min.js"></script>
+
+     <style>
+          table.gridtable {
+               font-family: verdana,arial,sans-serif;
+               font-size:11px;
+               color:#333333;
+               border-width: 1px;
+               border-color: #666666;
+               border-collapse: collapse;
+          }
+          table.gridtable th {
+               border-width: 1px;
+               padding: 8px;
+               border-style: solid;
+               border-color: #666666;
+               background-color: #dedede;
+          }
+          table.gridtable td {
+               border-width: 1px;
+               padding: 8px;
+               border-style: solid;
+               border-color: #666666;
+               background-color: #ffffff;
+          }
+     </style>
+</head>
+<body style="overflow-x: hidden;">
+<center>
+     <div style="width: 95%; margin-top: 30px">
+          <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+               <ul class="layui-tab-title">
+                    <li class="layui-this"><span class="layui-badge layui-bg-cyan" style="padding: 3px 10px;color: white;">工件信息</span>&nbsp;&nbsp;&nbsp;管理</li>
+               </ul>
+               <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">
+                         <br/><br/>
+                         <table class="gridtable" style="width: 100%" id="data-table"></table>
+                    </div>
+               </div>
+          </div>
+     </div>
+
+     <div id="task-report" style="position: absolute; right: 0px; width: 500px; top: "></div>
+</center>
+<script src="/depend/layui/layui.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+<script>
+
+     layui.use('layer', function() { //独立版的layer无需执行这一句
+          var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+     })
+
+     loadDataToTable();
+     function loadDataToTable() {
+          $.ajax({
+               url:"/task/query/ALL",
+               type:"get",
+               success:function (data) {
+                    var data = eval(data);
+                    if (data.success){
+                         var dataList = data.data;
+                         if (dataList.length == 0){
+                              $("#data-table").empty();
+                              alert("未加载到任务数据，请先执行调度任务");
+                              return;
+                         }
+                         $("#data-table").empty();
+                         $("#data-table").append("<tr><th>调度任务编号</th><th>操作</th></tr>");
+                         $.each(dataList, function (index, value) {
+                              $("#data-table").append("<tr><td>"+value.taskId+"</td><td><button type=\"button\" class=\"layui-btn layui-btn-xs layui-btn-normal\" onclick=\"queryData('"+value.taskId+"')\">查看调度结果</button></td></tr>");
+                         });
+                    }
+               },
+               error:function () {
+                    layer.msg("查询失败");
+                    layer.closeAll();
+               }
+          })
+     }
+
+     function queryData(id) {
+          $.ajax({
+               url:"/task/query/"+id,
+               type:"get",
+               success:function (data) {
+                    var data = eval(data);
+                    if (data.success){
+                         data = data.data;
+                         var taskImage = data.taskImage;
+                         var taskDataList = data.taskDataList;
+                         var report = "<center><div style='width:90%; text-align:left'><br/><br/><h3 style='margin-left:50px'>甘特图：</h3></br><img src='"+taskImage+"' style='width: 100%'></br></br> <h3 style='margin-left:50px'>数据报表：</h3></br>";
+                        var tableDate = "<table class=\"gridtable\" style=\"width: 84%;margin-left:50px \" id='data-table2'><tr><th>工件号</th><th>工序号</th><th>加工机器号</th><th>开始时间段</th><th>结束时间段</th></tr>";
+                         $.each(taskDataList, function (index, value) {
+                              tableDate += "<tr><td>"+value.technologyNumber+"</td><td>"+value.workpieceNumber+"</td><td>"+value.equipmentNumber+"</td><td>"+value.startTime+"</td><td>"+value.endTime+"</td></tr>";
+                         });
+                         tableDate += "</table>";
+                         report += tableDate;
+                         report += "</br></br></br></div></center>";
+                         layer.open({
+                              type: 1
+                              ,title: id+'调度报告'
+                              ,closeBtn: false
+                              ,area: ['750px', '95%']
+                              ,shade: 0.8
+                              ,id: id //设定一个id，防止重复弹出
+                              ,btn: ['关闭报告']
+                              ,btnAlign: 'c'
+                              ,moveType: 1 //拖拽模式，0或者1
+                              ,content: report
+                         });
+                    }
+               },
+               error:function () {
+                    layer.msg("任务报告获取失败");
+                    layer.closeAll();
+               }
+          })
+     }
+</script>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta name="referrer" content="no-referrer">
+     <meta charset="UTF-8">
+     <title>车间数据化管理系统</title>
+
+     <link type="text/css" rel="stylesheet" href="/css/common.css">
+     <link type="text/css" rel="stylesheet" href="/css/self.console.css">
+     <link type="text/css" rel="stylesheet" href="/depend/layui/css/layui.css">
+     <link rel="stylesheet" href="/css/font-awesome.min.css">
+     <script src="/depend/js/jquery-2.1.1.min.js"></script>
+
+     <style>
+          select{
+               width: 190px;
+               margin-top: 5px;
+               height: 38px;
+               line-height: 32px;
+               border: 1px solid #c9c9c9;
+               border-radius: 2px;
+          }
+          table.gridtable {
+               font-family: verdana,arial,sans-serif;
+               font-size:11px;
+               color:#333333;
+               border-width: 1px;
+               border-color: #666666;
+               border-collapse: collapse;
+          }
+          table.gridtable th {
+               border-width: 1px;
+               padding: 8px;
+               border-style: solid;
+               border-color: #666666;
+               background-color: #dedede;
+          }
+          table.gridtable td {
+               border-width: 1px;
+               padding: 8px;
+               border-style: solid;
+               border-color: #666666;
+               background-color: #ffffff;
+          }
+     </style>
+</head>
+
+<body style="overflow-x: hidden;">
+<center>
+     <div style="width: 95%; margin-top: 30px">
+          <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+               <ul class="layui-tab-title">
+                    <li class="layui-this"><span class="layui-badge layui-bg-cyan" style="padding: 3px 10px;color: white;">工件信息</span>&nbsp;&nbsp;&nbsp;管理</li>
+               </ul>
+               <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">
+                         <br/><br/>
+                         <div class="layui-form-item">
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">查询字段</label>
+                                   <div class="layui-input-inline">
+                                        <select name="quiz" id="key">
+                                             <option value="number">工件编号</option>
+                                             <option value="process">工序号</option>
+                                             <option value="batch">批量</option>
+                                             <option value="processTime">工序时间</option>
+                                             <option value="allTime">总时间</option>
+                                             <option value="deviceId">设备编号</option>
+                                        </select>
+                                   </div>
+                              </div>
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">查询值</label>
+                                   <div class="layui-input-inline">
+                                        <input type="text"  id="value" class="layui-input">
+                                   </div>
+                              </div>
+                              <div class="layui-inline">
+                                   <button type="button" class="layui-btn" lay-submit="" id="query-btn" onclick="loadDataToTable()">查询</button>
+                              </div>
+                         </div>
+                         <br/><br/>
+                         <table class="gridtable" style="width: 100%" id="data-table"></table>
+                    </div>
+               </div>
+          </div>
+     </div>
+</center>
+<script src="/depend/layui/layui.js" type="text/javascript"></script>
+<script src="/depend/layer/layer.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+<script>
+
+     loadDataToTable();
+     function loadDataToTable() {
+          var key = $("#key").val().trim();
+          var value = $("#value").val().trim();
+          var number,process,batch,processTime,allTime,deviceId;
+          if (key == "number") {
+               number = value;
+          }
+          if (key == "process") {
+               process = value;
+          }
+          if (key == "batch") {
+               batch = value;
+          }
+          if (key == "processTime") {
+               processTime = value;
+          }
+          if (key == "allTime") {
+               allTime = value;
+          }
+          if (key == "delivery") {
+               deviceId = value;
+          }
+          $.ajax({
+               url:"/technology/query",
+               type:"get",
+               data:{
+                    "number": number,
+                    "process": process,
+                    "batch": batch,
+                    "processTime": processTime,
+                    "allTime": allTime,
+                    "deviceId": deviceId
+               },
+               success:function (data) {
+                    var data = eval(data);
+                    if (data.success){
+                         var dataList = data.data;
+                         if (dataList.length == 0){
+                              $("#data-table").empty();
+                              alert("未加载到数据，请先录入数据");
+                              return;
+                         }
+                         $("#data-table").empty();
+                         $("#data-table").append("<tr><th>工件编号</th><th>工序号</th><th>批量</th><th>工序时间</th><th>总时间</th><th>设备编号</th><th>操作</th></tr>");
+                         $.each(dataList, function (index, value) {
+                              $("#data-table").append("<tr><td>"+value.number+"</td><td>"+value.process+"</td><td>"+value.batch+"</td><td>"+value.processTime+"</td><td>"+value.allTime+"</td><td>"+value.deviceId+"</td><td><button type=\"button\" class=\"layui-btn layui-btn-xs layui-btn-normal\" onclick=\"deleteData("+value.id+")\">删除</button></td></tr>");
+                         });
+                    }
+               },
+               error:function () {
+                    layer.msg("查询失败");
+                    layer.closeAll();
+               }
+          })
+     }
+
+     function deleteData(id) {
+          $.ajax({
+               url:"/technology/delete/"+id,
+               type:"post",
+               success:function (data) {
+                    var data = eval(data);
+                    if (data.success){
+                         loadDataToTable();
+                    }
+               },
+               error:function () {
+                    layer.msg("删除失败");
+                    layer.closeAll();
+               }
+          })
+     }
+</script>
+</html>

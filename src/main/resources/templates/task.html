@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta name="referrer" content="no-referrer">
+     <meta charset="UTF-8">
+     <title>车间数据化管理系统</title>
+
+     <link type="text/css" rel="stylesheet" href="/css/common.css">
+     <link type="text/css" rel="stylesheet" href="/css/self.console.css">
+     <link type="text/css" rel="stylesheet" href="/depend/layui/css/layui.css">
+     <link rel="stylesheet" href="/css/font-awesome.min.css">
+     <script src="/depend/js/jquery-2.1.1.min.js"></script>
+
+</head>
+<body style="overflow-x: hidden; background-color: #FAFAFA">
+<center>
+     <p style="width: 100%; height: 60px; margin-top: 60px; font-size: 18px; color: #4b4b4b">
+          生产车间调度任务
+     </p>
+     <img src="/img/task.png" style="width: 300px" id="task-img">
+     <p style="width: 100%; height: 60px; margin-top: 40px; font-size: 18px; color: #b1b1b1">
+          <button type="button" id="start-task-btn" class="layui-btn layui-btn-normal">开启调度任务</button>
+     </p>
+</center>
+<script src="/depend/layui/layui.js" type="text/javascript"></script>
+<script src="/depend/layer/layer.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+<script>
+
+     function loadDataToTable() {
+
+     }
+
+     // 开启调度任务
+     $("#start-task-btn").on("click", function () {
+          updateTaskStatus();
+     })
+
+     function updateTaskStatus() {
+          $("#task-img").attr("src", "/img/task.gif");
+          setTimeout(function(){
+               $("#start-task-btn").text("正在开启调度任务……");
+               setTimeout(function(){
+                    $("#start-task-btn").text("MATLAB 连接中……");
+                    setTimeout(function(){
+                         $("#start-task-btn").text("MATLAB 连接成功!");
+                         setTimeout(function(){
+                              $("#start-task-btn").text("调度任务执行中……");
+                              $.ajax({
+                                   url:"/task/start",
+                                   type:"post",
+                                   success:function (data) {
+                                        var data = eval(data);
+                                        if (data.success){
+                                             $("#start-task-btn").text("调度任务执行成功! 正在获取报告数据……");
+                                             // 调度任务执行成功，跳转至调度结果页
+                                             location.href="/to/data";
+                                        }
+                                   },
+                                   error:function () {
+                                        location.href="/to/data";
+                                        layer.msg("任务执行失败");
+                                        layer.closeAll();
+                                   }
+                              })
+
+                         }, 1000);
+                    }, 1800);
+               }, 1500);
+          }, 1000);
+     }
+</script>
+</html>

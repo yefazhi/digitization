@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta name="referrer" content="no-referrer">
+     <meta charset="UTF-8">
+     <title>车间数据化管理系统</title>
+
+     <link type="text/css" rel="stylesheet" href="/css/common.css">
+     <link type="text/css" rel="stylesheet" href="/css/self.console.css">
+     <link type="text/css" rel="stylesheet" href="/depend/layui/css/layui.css">
+     <link rel="stylesheet" href="/css/font-awesome.min.css">
+     <script src="/depend/js/jquery-2.1.1.min.js"></script>
+
+</head>
+<body style="overflow-x: hidden;">
+<center>
+     <div style="width: 95%; margin-top: 30px">
+          <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+               <ul class="layui-tab-title">
+                    <li class="layui-this"><span class="layui-badge layui-bg-cyan" style="padding: 3px 10px;color: white;">工件信息</span>&nbsp;&nbsp;&nbsp;录入</li>
+               </ul>
+               <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">
+                         <br/><br/>
+                         <form class="layui-form" action="">
+                              <div class="layui-form-item">
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label">工件编号</label>
+                                        <div class="layui-input-inline">
+                                             <input type="text" id="number" class="layui-input">
+                                        </div>
+                                   </div>
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label">批量</label>
+                                        <div class="layui-input-inline">
+                                             <input type="text" id="batch" class="layui-input">
+                                        </div>
+                                   </div>
+                              </div>
+                              <div class="layui-form-item">
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label">工件名</label>
+                                        <div class="layui-input-inline">
+                                             <input type="text" id="name" class="layui-input">
+                                        </div>
+                                   </div>
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label">供应商</label>
+                                        <div class="layui-input-inline">
+                                             <input type="text" id="supplier" class="layui-input">
+                                        </div>
+                                   </div>
+                              </div>
+                              <div class="layui-form-item">
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label">工序数</label>
+                                        <div class="layui-input-inline">
+                                             <input type="text" id="process" class="layui-input">
+                                        </div>
+                                   </div>
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label">交货期</label>
+                                        <div class="layui-input-inline">
+                                             <input type="text" id="delivery" class="layui-input">
+                                        </div>
+                                   </div>
+                              </div>
+                              <div class="layui-form-item">
+                                   <div class="layui-input-block">
+                                        <button type="button" id="submit" class="layui-btn" >立即提交</button>
+                                   </div>
+                              </div>
+                         </form>
+                    </div>
+               </div>
+          </div>
+     </div>
+</center>
+<script src="/depend/layui/layui.js" type="text/javascript"></script>
+<script src="/depend/layer/layer.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+<script>
+
+     $("#submit").on("click", function(){
+          var number = $("#number").val().trim();
+          var batch = $("#batch").val().trim();
+          var name = $("#name").val().trim();
+          var supplier = $("#supplier").val().trim();
+          var process = $("#process").val().trim();
+          var delivery = $("#delivery").val().trim();
+          if (number == "" || batch == "" || name == "" || supplier == "" || process == "" || delivery == "") {
+               // layer.msg("所有参数均为必填项");
+               alert("所有参数均为必填项");
+               return;
+          }
+          layer.load();
+          $.ajax({
+               url:"/workpiece/add",
+               type:"post",
+               data:{
+                    "number": number,
+                    "batch": batch,
+                    "name": name,
+                    "supplier": supplier,
+                    "process": process,
+                    "delivery": delivery
+               },
+               success:function (data) {
+                    data = eval(data);
+                    if (data.success) {
+                         alert("录入成功");
+                         // layer.msg("录入成功");
+                         $("#number").val("");
+                         $("#batch").val("");
+                         $("#name").val("");
+                         $("#supplier").val("");
+                         $("#process").val("");
+                         $("#delivery").val("");
+                    }
+               },
+               error:function () {
+                    layer.msg("操作失败");
+                    layer.closeAll();
+               }
+          })
+     })
+</script>
+</html>

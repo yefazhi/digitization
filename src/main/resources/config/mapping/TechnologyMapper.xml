@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitization.dal.inter.TechnologyDao">
+	<resultMap  type="com.digitization.dal.entry.TechnologyEntry"  id="TechnologyEntryMap">
+		<result property="id"           column="id"/>
+		<result property="number"       column="number"/>
+		<result property="process"       column="process"/>
+		<result property="batch"       column="batch"/>
+		<result property="processTime"       column="process_time"/>
+		<result property="allTime"       column="all_time"/>
+		<result property="deviceId"       column="device_id"/>
+	</resultMap>
+
+	<insert id="insert" parameterType="com.digitization.dal.entry.TechnologyEntry" useGeneratedKeys="true" keyProperty="id">
+		insert into technology_info (`number`, `process`, `batch`, `process_time`, `all_time`, `device_id`) values
+		(#{number}, #{process}, #{batch}, #{processTime}, #{allTime}, #{deviceId});
+	</insert>
+
+	<select id="queryList" parameterType="String" resultMap="TechnologyEntryMap">
+		SELECT * FROM technology_info
+		<where>
+			<if test="number != null"> number = #{number}</if>
+			<if test="process != null"> process = #{process}</if>
+			<if test="batch != null"> batch = #{batch}</if>
+			<if test="processTime != null"> process_time = #{processTime}</if>
+			<if test="allTime != null"> all_time = #{allTime}</if>
+			<if test="deviceId != null"> device_id = #{deviceId}</if>
+		</where>
+		order by id DESC;
+	</select>
+
+	<delete id="delete" parameterType="Integer">
+		delete from technology_info where id = #{id};
+	</delete>
+</mapper>

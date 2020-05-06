@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta name="referrer" content="no-referrer">
+     <meta charset="UTF-8">
+     <title>车间数据化管理系统</title>
+
+     <link type="text/css" rel="stylesheet" href="/css/common.css">
+     <link type="text/css" rel="stylesheet" href="/css/self.console.css">
+     <link type="text/css" rel="stylesheet" href="/depend/layui/css/layui.css">
+     <link rel="stylesheet" href="/css/font-awesome.min.css">
+     <script src="/depend/js/jquery-2.1.1.min.js"></script>
+
+     <style>
+          select{
+               width: 190px;
+               margin-top: 5px;
+               height: 38px;
+               line-height: 32px;
+               border: 1px solid #c9c9c9;
+               border-radius: 2px;
+               display: block;
+          }
+     </style>
+
+</head>
+<body style="overflow-x: hidden;">
+<center>
+     <div style="width: 95%; margin-top: 30px">
+          <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+               <ul class="layui-tab-title">
+                    <li class="layui-this"><span class="layui-badge layui-bg-cyan" style="padding: 3px 10px;color: white;">工艺信息</span>&nbsp;&nbsp;&nbsp;录入</li>
+               </ul>
+               <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">
+                         <br/><br/>
+                         <div class="layui-form-item">
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">工件编号</label>
+                                   <div class="layui-input-inline">
+                                        <select name="quiz" id="number">
+                                             <option value="">选择工件</option>
+                                        </select>
+                                   </div>
+                              </div>
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">工序号</label>
+                                   <div class="layui-input-inline">
+                                        <input type="text" id="process" class="layui-input">
+                                   </div>
+                              </div>
+                         </div>
+                         <div class="layui-form-item">
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">批量</label>
+                                   <div class="layui-input-inline">
+                                        <input type="text" id="batch" class="layui-input">
+                                   </div>
+                              </div>
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">工序时间</label>
+                                   <div class="layui-input-inline">
+                                        <input type="text" id="processTime" class="layui-input">
+                                   </div>
+                              </div>
+                         </div>
+                         <div class="layui-form-item">
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">总时间</label>
+                                   <div class="layui-input-inline">
+                                        <input type="text" id="allTime" class="layui-input">
+                                   </div>
+                              </div>
+                              <div class="layui-inline">
+                                   <label class="layui-form-label">设备编号</label>
+                                   <div class="layui-input-inline">
+                                        <select name="quiz" id="deviceId">
+                                             <option value="">选择设备</option>
+                                        </select>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="layui-form-item">
+                              <div class="layui-input-block">
+                                   <button type="button" class="layui-btn" id="submit">立即提交</button>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </div>
+</center>
+<script src="/depend/layui/layui.js" type="text/javascript"></script>
+<script src="/depend/layer/layer.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+<script>
+
+     initSelectOptions();
+     var value;
+     function initSelectOptions() {
+          $.ajax({
+               url:"/workpiece/query",
+               type:"get",
+               data:{
+                    "name": value
+               },
+               success:function (data) {
+                    var data = eval(data);
+                    if (data.success){
+                         var dataList = data.data;
+                         $.each(dataList, function (index, value) {
+                              $("#number").append("<option value='"+value.number+"'>"+value.number+"</option>");
+                         });
+                    }
+               },
+               error:function () {
+                    layer.msg("查询失败");
+                    layer.closeAll();
+               }
+          })
+
+          $.ajax({
+               url:"/equipment/query",
+               type:"get",
+               data:{
+                    "model": value
+               },
+               success:function (data) {
+                    var data = eval(data);
+                    if (data.success){
+                         var dataList = data.data;
+                         $.each(dataList, function (index, value) {
+                              $("#deviceId").append("<option value='"+value.number+"'>"+value.number+"</option>");
+                         });
+                    }
+               },
+               error:function () {
+                    layer.msg("查询失败");
+                    layer.closeAll();
+               }
+          })
+     }
+
+     $("#submit").on("click", function(){
+          var number = $("#number").val().trim();
+          var process = $("#process").val().trim();
+          var batch = $("#batch").val().trim();
+          var processTime = $("#processTime").val().trim();
+          var allTime = $("#allTime").val().trim();
+          var deviceId = $("#deviceId").val().trim();
+          if (number == "" || process == "" || batch == "" || processTime == "" || allTime == "" || deviceId == "") {
+               // layer.msg("所有参数均为必填项");
+               alert("所有参数均为必填项");
+               return;
+          }
+          layer.load();
+          $.ajax({
+               url:"/technology/add",
+               type:"post",
+               data:{
+                    "number": number,
+                    "process": process,
+                    "batch": batch,
+                    "processTime": processTime,
+                    "allTime": allTime,
+                    "deviceId": deviceId
+               },
+               success:function (data) {
+                    data = eval(data);
+                    if (data.success) {
+                         alert("录入成功");
+                         // layer.msg("录入成功");
+                         $("#number").val("");
+                         $("#process").val("");
+                         $("#batch").val("");
+                         $("#processTime").val("");
+                         $("#allTime").val("");
+                         $("#deviceId").val("");
+                    }
+               },
+               error:function () {
+                    layer.msg("操作失败");
+                    layer.closeAll();
+               }
+          })
+     })
+</script>
+</html>

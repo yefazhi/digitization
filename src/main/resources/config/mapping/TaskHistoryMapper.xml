@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitization.dal.inter.TaskHistoryDao">
+	<resultMap type="com.digitization.dal.entry.TaskHistoryEntry" id="TaskHistoryEntryMap">
+		<result property="id"         column="id"/>
+		<result property="taskId"     column="task_id"/>
+		<result property="taskData"      column="task_data"/>
+		<result property="taskImage"       column="task_image"/>
+	</resultMap>
+
+	<insert id="insert" parameterType="com.digitization.dal.entry.TaskHistoryEntry" useGeneratedKeys="true" keyProperty="id">
+		insert into task_history (`task_id`, `task_data`, `task_image`) values (#{taskId}, #{taskData}, #{taskImage});
+	</insert>
+
+	<select id="queryByTaskId" parameterType="String" resultMap="TaskHistoryEntryMap">
+		SELECT * FROM task_history where task_id = #{taskId} order by id DESC limit 1;
+	</select>
+
+	<select id="queryAll" parameterType="String" resultMap="TaskHistoryEntryMap">
+		SELECT * FROM task_history order by id DESC;
+	</select>
+
+	<delete id="delete" parameterType="String">
+		delete from task_history where task_id = #{taskId};
+	</delete>
+</mapper>

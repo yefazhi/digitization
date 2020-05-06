@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitization.dal.inter.EquipmentDao">
+	<resultMap  type="com.digitization.dal.entry.EquipmentEntry"  id="EquipmentEntryMap">
+		<result property="id"         column="id"/>
+		<result property="number"     column="number"/>
+		<result property="model"      column="model"/>
+		<result property="type"       column="type"/>
+		<result property="operation"  column="operation"/>
+		<result property="phone"      column="phone"/>
+	</resultMap>
+
+	<insert id="insert" parameterType="com.digitization.dal.entry.EquipmentEntry" useGeneratedKeys="true" keyProperty="id">
+		insert into equipment_info (`number`, `model`, `type`, `operation`, `phone`) values
+		(#{number}, #{model}, #{type}, #{operation}, #{phone});
+	</insert>
+
+	<select id="queryList" parameterType="String" resultMap="EquipmentEntryMap">
+		SELECT * FROM equipment_info
+		<where>
+			<if test="number != null"> number = #{number}</if>
+			<if test="model != null"> model = #{model}</if>
+			<if test="type != null"> type = #{type}</if>
+			<if test="operation != null"> operation = #{operation}</if>
+			<if test="phone != null"> phone = #{phone}</if>
+		</where>
+		order by id DESC;
+	</select>
+
+	<delete id="delete" parameterType="Integer">
+		delete from equipment_info where id = #{id};
+	</delete>
+</mapper>

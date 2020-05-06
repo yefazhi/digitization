@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digitization.dal.inter.WorkpieceDao">
+	<resultMap  type="com.digitization.dal.entry.WorkpieceEntry"  id="WorkpieceEntryMap">
+		<result property="id"           column="id"/>
+		<result property="number"       column="number"/>
+		<result property="batch"       column="batch"/>
+		<result property="name"       column="name"/>
+		<result property="supplier"       column="supplier"/>
+		<result property="process"       column="process"/>
+		<result property="delivery"       column="delivery"/>
+	</resultMap>
+
+	<insert id="insert" parameterType="com.digitization.dal.entry.WorkpieceEntry" useGeneratedKeys="true" keyProperty="id">
+		insert into workpiece_info (`number`, `batch`, `name`, `supplier`, `process`, `delivery`) values
+		(#{number}, #{batch}, #{name}, #{supplier}, #{process}, #{delivery});
+	</insert>
+
+	<select id="queryList" parameterType="String" resultMap="WorkpieceEntryMap">
+		SELECT * FROM workpiece_info
+		<where>
+			<if test="number != null"> number = #{number}</if>
+			<if test="batch != null"> batch = #{batch}</if>
+			<if test="name != null"> name = #{name}</if>
+			<if test="supplier != null"> supplier = #{supplier}</if>
+			<if test="process != null"> process = #{process}</if>
+			<if test="delivery != null"> delivery = #{delivery}</if>
+		</where>
+		order by id DESC;
+	</select>
+
+	<delete id="delete" parameterType="Integer">
+		delete from workpiece_info where id = #{id};
+	</delete>
+
+</mapper>

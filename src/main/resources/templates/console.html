@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta name="referrer" content="no-referrer">
+     <meta charset="UTF-8">
+     <title>车间数据化管理系统</title>
+
+     <link type="text/css" rel="stylesheet" href="/css/common.css">
+     <link type="text/css" rel="stylesheet" href="/css/self.console.css">
+     <link type="text/css" rel="stylesheet" href="/depend/layui/css/layui.css">
+     <link rel="stylesheet" href="/css/font-awesome.min.css">
+     <script src="/depend/js/jquery-2.1.1.min.js"></script>
+
+     <style>
+          dd {
+               padding-left: 30px;
+          }
+     </style>
+</head>
+<body style="overflow-x: hidden;">
+<center>
+     <div class="menuDiv">
+          <ul class="layui-nav layui-nav-tree layui-inline" style="margin-top: 100px; width: 200px;border: 0px; text-align: left" lay-filter="demo" id="menu-ul">
+               <li class="layui-nav-item">
+                    <a href="javascript:;"><img src="/img/menu1.png" style="width: 18px; margin-top: -4px; margin-right: 10px">工件管理</a>
+                    <dl class="layui-nav-child">
+                         <dd><a href="/to/manage-gongjian-console" target="_body">信息管理</a></dd>
+                         <dd><a href="/to/insert-gongjian-console" target="_body">工件录入</a></dd>
+                    </dl>
+               </li>
+               <li class="layui-nav-item">
+                    <a href="javascript:;"><img src="/img/menu1.png" style="width: 18px; margin-top: -4px; margin-right: 10px">设备管理</a>
+                    <dl class="layui-nav-child">
+                         <dd><a href="/to/manage-shebei-console" target="_body">设备管理</a></dd>
+                         <dd><a href="/to/insert-shebei-console" target="_body">设备录入</a></dd>
+                    </dl>
+               </li>
+               <li class="layui-nav-item">
+                    <a href="javascript:;"><img src="/img/menu2.png" style="width: 18px; margin-top: -4px; margin-right: 10px">工艺管理</a>
+                    <dl class="layui-nav-child">
+                         <dd><a href="/to/manage-gongyi-console" target="_body">信息管理</a></dd>
+                         <dd><a href="/to/insert-gongyi-console" target="_body">工艺录入</a></dd>
+                    </dl>
+               </li>
+               <li class="layui-nav-item">
+                    <a href="javascript:;"><img src="/img/menu3.png" style="width: 18px; margin-top: -4px; margin-right: 10px">任务调度</a>
+                    <dl class="layui-nav-child">
+                         <dd><a href="/to/task" target="_body">开启调度</a></dd>
+                         <dd><a href="/to/data" target="_body">历史调度</a></dd>
+                    </dl>
+               </li>
+          </ul>
+     </div>
+     <div class="headDiv" style="background: url('/img/header.png'); background-size: 100%; box-shadow: 0px 0px 30px #e4e4e4">
+          <a href="/to/console">
+               <span style="position: absolute; left: 10px; top: 0px; color: white; font-size: 16px; text-align: left;">
+                    <img src="/img/console_logo.png" style="height: 20px;">
+                    车间调度数字管理中心
+               </span>
+          </a>
+          <div class="top-menu-lab top-user">
+               <img id="login-user-photo" class="user-photo" src="/img/admin.png">
+               <span id="login-user-pickName" style="color: #e9e4b7">管理员</span>
+               <a href="/to/login" style="color: white">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;退出登录&nbsp;&nbsp;&nbsp;&nbsp;</a>
+          </div>
+     </div>
+     <iframe class="body-iframe" src="/to/default-console" name="_body"></iframe>
+</center>
+</body>
+<script src="/depend/layui/layui.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/common.js"></script>
+<script>
+     // 获取用户登录信息做页面展示
+     layui.use('element', function(){
+          var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+          //监听导航点击
+          element.on('nav(demo)', function(elem){
+               //console.log(elem)
+               layer.msg(elem.text());
+          });
+     });
+</script>
+</html>
